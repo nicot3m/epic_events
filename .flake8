@@ -1,0 +1,29 @@
+[flake8]
+
+exclude =
+    .git,
+	.idea
+	.gitignore,
+	.flake8,
+	readme.md,
+	requirements.txt,
+	P12_01_lien_repository_GitHub.txt,
+	env/,
+	flake-report/,
+	account/__pycache__/,
+	account/migrations/,
+	epicevents/__pycache__/,
+	crm/migrations/,
+	crm/__pycache__/,
+	crm/migrations/,
+	account/tests.py,
+	helpdesk/tests.py,
+	db_epicevents.sql,
+	EpicEvents.postman_collection.json,
+	logs/
+	EpicEvents_docu_postman.pdf
+	ERD_epicevents.pdf
+
+max-line-length=119
+format=html
+htmldir=flake-report

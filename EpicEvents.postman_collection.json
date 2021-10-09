@@ -1,0 +1,1781 @@
+{
+	"info": {
+		"_postman_id": "7cfa9161-b8f3-4c69-9646-bb88d152de93",
+		"name": "EpicEvents",
+		"description": "**\"epicevents\" is the CRM API of Epic Events with a secure back-end architecture. It uses a front-end web django admin interface for super-user and manager and a Django ORM in Postman for seller and support. This documentation is about Django ORM in Postman. It deal with:**\n* User\n* Client\n* Contract\n* Event.\n\nThe API SoftDesk is coded in Python with DjangoRest and has two applications account and crm.\n\nThe data are saved in the PostgreSQL database db_epicevents.\n\n_**Warning: The environnement Environment_OC_P12 must be activated in this collection.**_\n\n# Authorization\n* Authorization with bearer Thoken (jwt_access) for 30'.\n* login access only to registered user\n* There are 3 groups: \n    1. management for super-user and manager\n    1. sales for seller\n    1. support for support\n* The user must be in one of these groups to use the API.\n* The crud of user and group is done in the django admin interface by super-user or manager. The managers have read only authorization for all objects in the API for check only. If they need to change an object, they can do it in the django admin interface.\n* Normally, the API is for seller and support.\n* The sellers whork as a team so they can all create, read and change a client, a contract and an event. Like this a seller can prospect a client and another seller can update his detail. A seller can be a back up of another seller.\n* The delete request in not allowed to keep the history of the objects.\n* Authorization matrix by group\n| Authorization | Create        | Read          | Update        | Delete        |\n| ------------- |:-------------:|:-------------:|:-------------:|:-------------:|\n| users| N/A | management, sales, support | N/A | N/A |\n| groups| N/A | management, sales, support | N/A | N/A |\n| client| sales | management, sales, support  | sales |N/A|\n| contract| sales | management, sales, support | sales |N/A|\n| event| sales | management, sales, support | sales, support |N/A|",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "account",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response  = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"jwt_refresh\", response.refresh);\r",
+									"pm.environment.set(\"jwt_access\", response.access);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"seller1\",\r\n    \"password\": \"123654abc\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/login/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"login",
+								""
+							]
+						},
+						"description": "**Log in a user**\n* Fill the body as per next example.\n* The users saved in the database as examples are:\n    1. admin1 (id1) (management group)\n    1. manager1 (id2) (management group)\n    1. manager2 (id3) (management group)\n    1. seller1 (id4) (sales group)\n    1. seller2 (id5) (sales group)\n    1. support1(id6) (support group)\n    1. support2 (id7) (support group)\n    1. lambda (id8) (no authorizations)\n* **Attention, for safety reasons, the passwords must be changed after the deployment phase in production.**"
+					},
+					"response": []
+				},
+				{
+					"name": "Read the users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/users/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								""
+							]
+						},
+						"description": "**List the registered users**\n* The users are sorted by ID.\n* For special authorizations see the authorization matrix by group"
+					},
+					"response": [
+						{
+							"name": "Read the users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/users/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 08 Jul 2021 11:03:19 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.1"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1826"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"username\": \"admin1\",\n        \"first_name\": \"\",\n        \"last_name\": \"\",\n        \"email\": \"\",\n        \"password\": \"pbkdf2_sha256$260000$Dv9bIp1MHF1k4jJ5uUhIwK$ugn1HAFPKI6XZKfiIEpptxw1T079Vg4umEww92p7f4Q=\",\n        \"is_staff\": true,\n        \"groups\": [\n            1\n        ]\n    },\n    {\n        \"id\": 2,\n        \"username\": \"manager1\",\n        \"first_name\": \"hugo\",\n        \"last_name\": \"boss\",\n        \"email\": \"hugo.boss@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$IE7ezcJIneqJuQjpfCkbw8$suV8s43bkk6AMbXhNcqt2MqUG9xD7nrE8SKtsqnmMJg=\",\n        \"is_staff\": true,\n        \"groups\": [\n            1\n        ]\n    },\n    {\n        \"id\": 3,\n        \"username\": \"manager2\",\n        \"first_name\": \"jean\",\n        \"last_name\": \"chef\",\n        \"email\": \"jean.chef@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$XBdGQPByNYE4ONzA8bcnaZ$u92U3IuOdZyETsnvQiPCoH6ovKBEUXmAVllDls6VkGA=\",\n        \"is_staff\": true,\n        \"groups\": [\n            1\n        ]\n    },\n    {\n        \"id\": 4,\n        \"username\": \"seller1\",\n        \"first_name\": \"mar\",\n        \"last_name\": \"keting\",\n        \"email\": \"mar.keting@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$4yQ3VM93nhy86zfAiLmHu6$qxh4ZkA9XSRyXJs4A/XgiK6Omr3SGj6isqqi1huEDag=\",\n        \"is_staff\": false,\n        \"groups\": [\n            2\n        ]\n    },\n    {\n        \"id\": 5,\n        \"username\": \"seller2\",\n        \"first_name\": \"commer\",\n        \"last_name\": \"cial\",\n        \"email\": \"commer.cial@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$A2TBXFdEVw24ccl58CcRoh$TCebf8Moxl+it8ulIpFiMv4XpavSczWnp3DXKsUjnH4=\",\n        \"is_staff\": false,\n        \"groups\": [\n            2\n        ]\n    },\n    {\n        \"id\": 6,\n        \"username\": \"support1\",\n        \"first_name\": \"sue\",\n        \"last_name\": \"portal\",\n        \"email\": \"sue.portal@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$Eigc9g8O8EEyME4TGje0kU$flDoIBMnHssisghxXcx0uya29qORA+iQNG1s0sCpoQw=\",\n        \"is_staff\": false,\n        \"groups\": [\n            3\n        ]\n    },\n    {\n        \"id\": 7,\n        \"username\": \"support2\",\n        \"first_name\": \"eve\",\n        \"last_name\": \"nement\",\n        \"email\": \"eve.nement@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$WSlzy4BzLkdz91n1hmU5zQ$xqhPQpuktn/0zli0d7ljxvYARtm/Vc8IhMwW63n6dK4=\",\n        \"is_staff\": false,\n        \"groups\": [\n            3\n        ]\n    },\n    {\n        \"id\": 8,\n        \"username\": \"lambda\",\n        \"first_name\": \"lam\",\n        \"last_name\": \"bda\",\n        \"email\": \"lam.bda@gmail.com\",\n        \"password\": \"pbkdf2_sha256$260000$2bz2cEXiCJcO79xx1vw9tn$hpw5qaBHn/rO5uSjB2fZB59ueBJID+6cy6smhXChLKw=\",\n        \"is_staff\": false,\n        \"groups\": []\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Read a user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/users/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "**Show the detail of a user**\n* For special authorizations see the authorization matrix by group\n* Add the user ID in the url as per next example"
+					},
+					"response": [
+						{
+							"name": "Read a user",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/users/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 08 Jul 2021 11:02:19 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.1"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "201"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"username\": \"admin1\",\n    \"first_name\": \"\",\n    \"last_name\": \"\",\n    \"email\": \"\",\n    \"password\": \"pbkdf2_sha256$260000$Dv9bIp1MHF1k4jJ5uUhIwK$ugn1HAFPKI6XZKfiIEpptxw1T079Vg4umEww92p7f4Q=\",\n    \"is_staff\": true,\n    \"groups\": [\n        1\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Read the groups",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/groups/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"groups",
+								""
+							]
+						},
+						"description": "**List the groups**\n* For special authorizations see the authorization matrix by group"
+					},
+					"response": [
+						{
+							"name": "Read the groups",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/groups/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"groups",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 08 Jul 2021 11:02:28 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.1"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "80"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 2,\n        \"name\": \"sales\"\n    },\n    {\n        \"id\": 3,\n        \"name\": \"support\"\n    },\n    {\n        \"id\": 1,\n        \"name\": \"management\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Read a group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/groups/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"groups",
+								"1"
+							]
+						},
+						"description": "**Show the details of a group**\n* For special authorizations see the authorization matrix by group\n* Add the group ID in the url as per next example"
+					},
+					"response": [
+						{
+							"name": "Read a group",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/groups/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"groups",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 08 Jul 2021 11:02:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.1"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "28"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"name\": \"management\"\n}"
+						}
+					]
+				}
+			],
+			"description": "* Login\n* Read the users\n* Read a user\n* Read the groups\n* Read a group"
+		},
+		{
+			"name": "crm",
+			"item": [
+				{
+					"name": "client",
+					"item": [
+						{
+							"name": "Read the clients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/clients/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"clients",
+										""
+									]
+								},
+								"description": "**List the clients**\n* The clients are sorted by ID.\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Read the clients",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/clients/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"clients",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 08 Jul 2021 15:38:30 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, POST, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "535"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"first_name\": \"arche\",\n        \"last_name\": \"teur\",\n        \"email\": \"ache.teur@gmail.com\",\n        \"phone\": \"0504030201\",\n        \"mobile\": \"0604030201\",\n        \"company_name\": \"Enterprise1\",\n        \"date_created\": \"2021-07-07T11:40:24.532768+02:00\",\n        \"date_updated\": \"2021-07-07T11:41:21.397213+02:00\",\n        \"sales_contact\": 4\n    },\n    {\n        \"id\": 11,\n        \"first_name\": \"bob\",\n        \"last_name\": \"bie\",\n        \"email\": \"bob.bie@gmail.com\",\n        \"phone\": \"0504030201\",\n        \"mobile\": \"0604030201\",\n        \"company_name\": \"Enterprise2\",\n        \"date_created\": \"2021-07-08T17:38:21.474067+02:00\",\n        \"date_updated\": \"2021-07-08T17:38:21.474067+02:00\",\n        \"sales_contact\": 4\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Create a client",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"first_name\": \"bob\",\r\n    \"last_name\": \"bie\",\r\n    \"email\": \"bob.bie@gmail.com\",\r\n    \"phone\": \"0504030201\",\r\n    \"mobile\": \"0604030201\",\r\n    \"company_name\": \"Enterprise2\",\r\n    \"sales_contact\": 4\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/clients/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"clients",
+										""
+									]
+								},
+								"description": "**Create a client**\n* Fill the body as per next example\n* Add a sale contact ID\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Create a client",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"first_name\": \"bob\",\r\n    \"last_name\": \"bie\",\r\n    \"email\": \"bob.bie@gmail.com\",\r\n    \"phone\": \"0504030201\",\r\n    \"mobile\": \"0604030201\",\r\n    \"company_name\": \"Enterprise2\",\r\n    \"sales_contact\": 4\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/clients/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"clients",
+												""
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 08 Jul 2021 15:38:21 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, POST, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "264"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 11,\n    \"first_name\": \"bob\",\n    \"last_name\": \"bie\",\n    \"email\": \"bob.bie@gmail.com\",\n    \"phone\": \"0504030201\",\n    \"mobile\": \"0604030201\",\n    \"company_name\": \"Enterprise2\",\n    \"date_created\": \"2021-07-08T17:38:21.474067+02:00\",\n    \"date_updated\": \"2021-07-08T17:38:21.474067+02:00\",\n    \"sales_contact\": 4\n}"
+								}
+							]
+						},
+						{
+							"name": "Read a client",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/clients/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"clients",
+										"1",
+										""
+									]
+								},
+								"description": "**Show the detail of a client**\n* Add the client ID in the url as per next example\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Read a client",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/clients/1/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"clients",
+												"1",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 08 Jul 2021 15:39:20 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "268"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 1,\n    \"first_name\": \"arche\",\n    \"last_name\": \"teur\",\n    \"email\": \"ache.teur@gmail.com\",\n    \"phone\": \"0504030201\",\n    \"mobile\": \"0604030201\",\n    \"company_name\": \"Enterprise1\",\n    \"date_created\": \"2021-07-07T11:40:24.532768+02:00\",\n    \"date_updated\": \"2021-07-07T11:41:21.397213+02:00\",\n    \"sales_contact\": 4\n}"
+								}
+							]
+						},
+						{
+							"name": "Update a client",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"first_name\": \"arche\",\r\n    \"last_name\": \"teur\",\r\n    \"email\": \"ache.teur@gmail.com\",\r\n    \"phone\": \"0504030201\",\r\n    \"mobile\": \"0604030201\",\r\n    \"company_name\": \"Enterprise1\",\r\n    \"sales_contact\": 4\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/clients/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"clients",
+										"1",
+										""
+									]
+								},
+								"description": "**Update the detail of a clients**\n* Add the client ID in the url as per next example\n* In the body, the fields are the same as the request create a client.\n* You can update the fields that you want.\n* For example, fill the body as per next example.\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Update a client",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"first_name\": \"arche\",\r\n    \"last_name\": \"teur\",\r\n    \"email\": \"ache.teur@gmail.com\",\r\n    \"phone\": \"0504030201\",\r\n    \"mobile\": \"0604030201\",\r\n    \"company_name\": \"Enterprise1\",\r\n    \"sales_contact\": 4\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/clients/1/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"clients",
+												"1",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 08 Jul 2021 15:39:32 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "268"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 1,\n    \"first_name\": \"arche\",\n    \"last_name\": \"teur\",\n    \"email\": \"ache.teur@gmail.com\",\n    \"phone\": \"0504030201\",\n    \"mobile\": \"0604030201\",\n    \"company_name\": \"Enterprise1\",\n    \"date_created\": \"2021-07-07T11:40:24.532768+02:00\",\n    \"date_updated\": \"2021-07-08T17:39:32.561392+02:00\",\n    \"sales_contact\": 4\n}"
+								}
+							]
+						}
+					],
+					"description": "* Read the clients\n* Create a client\n* Read a client\n* Update a client"
+				},
+				{
+					"name": "contract",
+					"item": [
+						{
+							"name": "Read the contracts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/contracts/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"contracts",
+										""
+									]
+								},
+								"description": "**List the contracts**\n* The contracts are sorted by ID.\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Read the contracts",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/contracts/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"contracts",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 07:58:06 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, POST, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "392"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"client\": 1,\n        \"sales_contact\": 5,\n        \"date_created\": \"2021-07-07T17:08:19.149673+02:00\",\n        \"date_updated\": \"2021-07-08T22:09:34.408589+02:00\",\n        \"status\": true,\n        \"amount\": 999.99,\n        \"payment_due\": \"2021-07-14\"\n    },\n    {\n        \"id\": 2,\n        \"client\": 11,\n        \"sales_contact\": 4,\n        \"date_created\": \"2021-07-09T09:57:34.929104+02:00\",\n        \"date_updated\": \"2021-07-09T09:57:34.942605+02:00\",\n        \"status\": true,\n        \"amount\": 999.99,\n        \"payment_due\": \"2021-07-14\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Create a contract",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"client\": 11,\r\n    \"sales_contact\": 4,\r\n    \"status\": \"True\",\r\n    \"amount\": 999.99,\r\n    \"payment_due\": \"2021-07-14\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/contracts/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"contracts",
+										""
+									]
+								},
+								"description": "**Create a contract**\n* Fill the body as per next example.\n* sales_contact: write the id of the sale contact\n* status: True while contract in progress, by default True when created\n* Create an event automatically with contract id and same client id\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Create a contract",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"client\": 11,\r\n    \"sales_contact\": 4,\r\n    \"status\": \"True\",\r\n    \"amount\": 999.99,\r\n    \"payment_due\": \"2021-07-14\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/contracts/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"contracts",
+												""
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 07:57:34 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, POST, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "195"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 2,\n    \"client\": 11,\n    \"sales_contact\": 4,\n    \"date_created\": \"2021-07-09T09:57:34.929104+02:00\",\n    \"date_updated\": \"2021-07-09T09:57:34.942605+02:00\",\n    \"status\": true,\n    \"amount\": 999.99,\n    \"payment_due\": \"2021-07-14\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Read a contract",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/contracts/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"contracts",
+										"2",
+										""
+									]
+								},
+								"description": "**Show the detail of a contractt**\n* Add the contract ID in the url as per next example\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Read a contract",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/contracts/2/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"contracts",
+												"2",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 07:58:34 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "195"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 2,\n    \"client\": 11,\n    \"sales_contact\": 4,\n    \"date_created\": \"2021-07-09T09:57:34.929104+02:00\",\n    \"date_updated\": \"2021-07-09T09:57:34.942605+02:00\",\n    \"status\": true,\n    \"amount\": 999.99,\n    \"payment_due\": \"2021-07-14\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update a contract",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sales_contact\": 4,\r\n    \"status\": \"True\",\r\n    \"amount\": 999.99,\r\n    \"payment_due\": \"2021-07-14\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/contracts/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"contracts",
+										"2",
+										""
+									]
+								},
+								"description": "**Update the detail of a contract**\n* Add the client ID in the url as per next example\n* For example, fill the body as per next example.\n* The client can't be changed.\n* Status must be changed to False when the contract is finished.\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Update a contract",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"sales_contact\": 4,\r\n    \"status\": \"True\",\r\n    \"amount\": 999.99,\r\n    \"payment_due\": \"2021-07-14\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/contracts/2/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"contracts",
+												"2",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 10:57:21 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "195"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 2,\n    \"client\": 11,\n    \"sales_contact\": 4,\n    \"date_created\": \"2021-07-09T09:57:34.929104+02:00\",\n    \"date_updated\": \"2021-07-09T12:57:21.230944+02:00\",\n    \"status\": true,\n    \"amount\": 999.99,\n    \"payment_due\": \"2021-07-14\"\n}"
+								}
+							]
+						}
+					],
+					"description": "* Read the contracts\n* Create a contract\n* Read a contract\n* Update a contract"
+				},
+				{
+					"name": "event",
+					"item": [
+						{
+							"name": "Read the events",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/events/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"events",
+										""
+									]
+								},
+								"description": "**List the eventss**\n* The events are sorted by date the recent first.\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Read the events",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/events/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"events",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 14:19:11 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, POST, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "480"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"client\": 11,\n        \"date_created\": \"2021-07-09T09:57:34.940104+02:00\",\n        \"date_updated\": \"2021-07-09T09:57:34.943610+02:00\",\n        \"support_contact\": 7,\n        \"event_status\": true,\n        \"attendees\": 11,\n        \"event_date\": \"2021-07-14\",\n        \"notes\": \"feu d'artifice du 14 juillet\",\n        \"contract\": 2\n    },\n    {\n        \"client\": 1,\n        \"date_created\": \"2021-07-07T17:08:19.158670+02:00\",\n        \"date_updated\": \"2021-07-09T16:16:33.276048+02:00\",\n        \"support_contact\": 6,\n        \"event_status\": true,\n        \"attendees\": 10,\n        \"event_date\": \"2021-07-14\",\n        \"notes\": \"bal 14 juillet\",\n        \"contract\": 1\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Read an event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/events/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"events",
+										"1",
+										""
+									]
+								},
+								"description": "**Show the detail of an eventt**\n* Add the contract ID in the url as per next example\n* For special authorizations see the authorization matrix by group"
+							},
+							"response": [
+								{
+									"name": "Read an event",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:8000/events/1/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"events",
+												"1",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 14:17:27 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "231"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"client\": 1,\n    \"date_created\": \"2021-07-07T17:08:19.158670+02:00\",\n    \"date_updated\": \"2021-07-09T16:16:33.276048+02:00\",\n    \"support_contact\": 6,\n    \"event_status\": true,\n    \"attendees\": 10,\n    \"event_date\": \"2021-07-14\",\n    \"notes\": \"bal 14 juillet\",\n    \"contract\": 1\n}"
+								}
+							]
+						},
+						{
+							"name": "Update an event",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"support_contact\": 6,\r\n    \"event_status\": \"True\",\r\n    \"attendees\": 10,\r\n    \"event_date\": \"2021-07-14\",\r\n    \"notes\": \"bal 14 juillet\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/events/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"events",
+										"1",
+										""
+									]
+								},
+								"description": "**Update the detail of an event**\n* Add the contract ID in the url as per next example\n* First, support_contact to be defined by a seller after the contract has be made\n* then event_status must be changed to True by a seller meaning event in progress\n* For other fields, fill the body as per next example\n* event_status must be changed to False when the event is finished\n* For special authorizations see the authorization matrix by group\n* A particular authorization is that only support defined as support_contact can update an event only if event_status is True"
+							},
+							"response": [
+								{
+									"name": "Update an event",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"support_contact\": 6,\r\n    \"event_status\": \"True\",\r\n    \"attendees\": 10,\r\n    \"event_date\": \"2021-07-14\",\r\n    \"notes\": \"bal 14 juillet\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://127.0.0.1:8000/events/1/",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"events",
+												"1",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 09 Jul 2021 14:12:22 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.9.1"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "231"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"client\": 1,\n    \"date_created\": \"2021-07-07T17:08:19.158670+02:00\",\n    \"date_updated\": \"2021-07-08T22:05:57.278206+02:00\",\n    \"support_contact\": 6,\n    \"event_status\": true,\n    \"attendees\": 10,\n    \"event_date\": \"2021-07-14\",\n    \"notes\": \"bal 14 juillet\",\n    \"contract\": 1\n}"
+								}
+							]
+						}
+					],
+					"description": "* Read the events\n* Read an event\n* Update an event"
+				}
+			],
+			"description": "** CRM API with folders: **\n* client\n* contract\n* event"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_access}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
